@@ -1,7 +1,7 @@
 import {BrowserRouter as Router,Routes,Route} from "react-router-dom"
-import Login from '../pages/Auth/Login'
-import SignUp from '../pages/Auth/SignUp'
-import Home from '../pages/Home/Home'
+import Login from './pages/Auth/Login'
+import SignUp from './pages/Auth/SignUp'
+import Home from './pages/Home/Home'
 
 export default function App() {
   return (

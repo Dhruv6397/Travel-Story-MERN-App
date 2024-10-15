@@ -21,6 +21,10 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const User = require("./models/user.model")
 const TravelStory = require("./models/travelStory.model")
 
+app.get("/",(req,res)=>{
+    return res.status(200).json({"message":"this is req"})
+})
+
 //create account
 app.post("/create-account",async (req,res)=>{
     const {fullName,email,password} = req.body

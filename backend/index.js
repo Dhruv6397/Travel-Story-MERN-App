@@ -87,7 +87,6 @@ app.post("/login",async(req,res)=>{
             accessToken,
             message:"Login success full"
         })
-
 })
 
 //get user

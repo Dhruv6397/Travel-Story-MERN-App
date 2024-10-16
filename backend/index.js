@@ -93,8 +93,8 @@ app.post("/login",async(req,res)=>{
 app.get("/get-user",authenticateToken,async(req,res)=>{
     const {userId} = req.user
     
-    const isUSer = await User.findOne({_id:userId})
-    if(!isUSer){
+    const isUser = await User.findOne({_id:userId})
+    if(!isUser){
         res.sendStatus(401)
     }
     return res.json({
@@ -146,7 +146,7 @@ app.delete("/delete-image",async(req,res)=>{
 })
 
 //serve static files from the uploads ans assests directory
-app.use("/uploads",express.static(path.join(__dirname,"uplads")))
+app.use("/uploads",express.static(path.join(__dirname,"uploads")))
 app.use("/assets",express.static(path.join(__dirname,"assets")))
 
 
@@ -280,7 +280,7 @@ app.put("/update-is-favourite/:id",authenticateToken,async(req,res)=>{
         await travelStory.save()
         res.status(200).json({story:travelStory,message:"Update successful"})
     }catch(err){
-        res.status(500).json({error:true,message:error.message})
+        res.status(500).json({error:true,message:err.message})
     }
 })
 

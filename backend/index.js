@@ -191,6 +191,7 @@ app.get('/get-all-stories',authenticateToken,async (req,res)=>{
 })
 
 
+
 //edit travel story
 app.post("/edit-story/:id",authenticateToken,async (req,res)=>{
     const {id} = req.params

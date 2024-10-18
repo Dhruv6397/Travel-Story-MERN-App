@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {DayPicker} from "react-day-picker"
 import {MdOutlineDateRange,MdClose} from "react-icons/md"
 import moment from "moment"
@@ -16,7 +17,7 @@ const DateSelector = ({date,setDate}) => {
             :moment().format("Do MMM YYYY")
          }
       </button>
-      <div className="overflow-y-scroll p-5 bg-sky-50/80 rounded-lg relative pt-9">
+      {openDatePicker && <div className="overflow-y-scroll p-5 bg-sky-50/80 rounded-lg relative pt-9">
         <button className="w-10 h-10 rounded-full flex items-center justify-center bg-sky-100 hover:bg-sky-100 absolute top-2 right-2"
         onClick={()=>{
             setOpenDatePicker(false)
@@ -30,7 +31,7 @@ const DateSelector = ({date,setDate}) => {
             onSelect={setDate}
             pageNavigation
         />
-      </div>
+      </div>}
     </div>
   )
 }

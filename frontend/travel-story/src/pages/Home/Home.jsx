@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css"
 import AddEditTravelStory from "./AddEditTravelStory"
 import Modal from "react-modal"
 import {MdAdd} from "react-icons/md"
-
+import ViewTravelStory from "./ViewTravelStory"
 
 
 export default function Home() {
@@ -19,6 +19,10 @@ export default function Home() {
   const [openAddEditModel,setOpenAddEditModel] = useState({
     isShown:false,
     type:"add",
+    data:null
+  })
+  const[openViewModel,setOpenViewModel] = useState({
+    isShown:false,
     data:null
   })
 
@@ -52,11 +56,11 @@ export default function Home() {
 
   //handle edit
   const handleEdit = async(data)=>{
-
+    setOpenAddEditModel({isShown:true,type:"edit",data:data})
   }
   //handle view story
   const handleViewStory = (data)=>{
-
+    setOpenViewModel({isShown:true,data})
   }
   //handle is favourite
   const updateIsFavourite = async(storyData)=>{
@@ -141,6 +145,31 @@ export default function Home() {
         />
       </Modal> 
       
+      <Modal
+        isOpen={openViewModel.isShown}
+        onRequestClose={()=>{}}
+        style={{
+          overlay:{
+            backgroundColor:"rgba(0,0,0,0.2)",
+            zIndex:999
+          }
+        }}
+        appElement={document.getElementById("root")}
+        className="model-box"
+        >
+          <ViewTravelStory
+            storyInfo={openViewModel.data || null}
+            onClose={()=>{
+              setOpenViewModel((prevState)=>({...prevState,isShown:false}))
+            }}
+            onEditClick={()=>{
+              setOpenViewModel((prevState)=>({...prevState,isShown:false}))
+              handleEdit(openViewModel.data || null)
+            }}
+            onDeleteClick={()=>{}}
+          />
+        </Modal>
+
       <button
       className="w-16 h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-10 bottom-10"
       onClick={()=>{

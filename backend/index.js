@@ -107,7 +107,7 @@ app.get("/get-user",authenticateToken,async(req,res)=>{
 
 
 //route to handle image upload
-app.post('/image-upload',upload.single("image"), async(req,res)=>{
+app.post('/image-upload',upload.single("image"), (req,res)=>{
     try{
         if(!req.file){
             return res.status(400).json({error:true,

@@ -1,23 +1,102 @@
-import {MdAdd,MdClose, MdDeleteOutline, MdUpdate} from "react-icons/md"
+import {MdAdd,MdClose,MdUpdate} from "react-icons/md"
 import DateSelector from "../../components/Input/DateSelector"
 import { useState } from "react"
 import ImageSelector from "../../components/Input/ImageSelector"
 import TagInput from "../../components/Input/TagInput"
+import uploadImage from "../../utils/uploadImage"
+import axiosInstance from "../../utils/axiosInstance"
+import {toast} from "react-toastify"
+import moment from "moment"
 const AddEditTravelStory = ({
     storyInfo,
     type,
     onClose,
     getAllTravelStories
 }) => {
-  const [title,setTitle] = useState("")
-  const [storyImg,setStoryImg] = useState(null)
-  const [story, setStory] = useState("")
-  const [visitedLocation,setVisitedLocation] = useState([])
-  const [visitedDate,setVisitedDate] = useState(null)
-  const handleAddOrUpdateClick=()=>{}
+  const [title,setTitle] = useState(storyInfo?.title || "")
+  const [storyImg,setStoryImg] = useState(storyInfo?.imageUrl||null)
+  const [story, setStory] = useState(storyInfo?.story||"")
+  const [visitedLocation,setVisitedLocation] = useState(storyInfo?.visitedLocation||[])
+  const [visitedDate,setVisitedDate] = useState(storyInfo?.visitedDate || null)
+  const [error,setError] = useState("")
+  
+  const updateTravelStory= async()=>{
+    try{
+      let imageUrl = ""
+      if(storyImg){
+        const imageUploadRes = await uploadImage(storyImg)
+        imageUrl = imageUploadRes.imageUrl || ""
+      }
+      const response = await axiosInstance.post("/edit-story",{
+        title,
+        story,
+        imageUrl:imageUrl || "",
+        visitedLocation,
+        visitedDate:visitedDate ? moment(visitedDate).valueOf():moment().valueOf()
+      })
+      if(response.data && response.data.story){
+        console.log("added story",response.data)
+        toast.success("Story added successfully")
+        getAllTravelStories()
+        onClose()
+      }
+
+    }catch(error){
+      if(error.response && error.response.data && error.response.message){
+        setError(error.response.data.message)
+      }else{
+        setError("Something went wrong")
+      }
+    }
+  }
+  const addNewTravelStory=async()=>{
+    try{
+      let imageUrl = ""
+      if(storyImg){
+        const imageUploadRes = await uploadImage(storyImg)
+        imageUrl = imageUploadRes.imageUrl || ""
+      }
+      const response = await axiosInstance.post("/add-travel-story",{
+        title,
+        story,
+        imageUrl:imageUrl || "",
+        visitedLocation,
+        visitedDate:visitedDate ? moment(visitedDate).valueOf():moment().valueOf()
+      })
+      if(response.data && response.data.story){
+        console.log("added story",response.data)
+        toast.success("Story added successfully")
+        getAllTravelStories()
+        onClose()
+      }
+
+    }catch(error){
+      if(error.response && error.response.data && error.response.message){
+        setError(error.response.data.message)
+      }else{
+        setError("Something went wrong")
+      }
+    }
+  }
+
+  const handleAddOrUpdateClick=()=>{
+   if(!title){
+      setError("Please enter the title")
+      return
+    }
+    if(!story){
+      setError("Please enter the story")
+    }
+    setError("")
+    if(type=="edit"){
+      updateTravelStory()
+    }else{
+      addNewTravelStory()
+    }
+  }
   const handleDeleteImg=()=>{}
   return (
-    <>
+    <div className="relative">
       <div className="flex items-center justify-between">
         <h5 className="text-xl font-medium text-slate-700">
           {type=== "add"?"Add Story":"Edit Story"}
@@ -38,6 +117,7 @@ const AddEditTravelStory = ({
               <MdClose className="text-xl text-slate-400"/>
             </button>
           </div>
+          {error && (<p className="text-red-500 text-xs pt-2 text-right">{error}</p>)}
         </div>
       </div>
 
@@ -75,7 +155,7 @@ const AddEditTravelStory = ({
 
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

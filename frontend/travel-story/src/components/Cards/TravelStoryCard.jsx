@@ -8,7 +8,6 @@ const TravelStoryCard = ({
     date,
     visitedLocation,
     isFavourite,
-    onEdit,
     onClick,
     onFavouriteClick
     }) => {
@@ -18,7 +17,9 @@ const TravelStoryCard = ({
     transition-all ease-in-out relative cursor-pointer'>
       <img src={imageUrl} 
       alt={title} 
-      className='w-full h-56 object-cover rounded-lg' />
+      className='w-full h-56 object-cover rounded-lg'
+      onClick={onClick}
+      />
         <button
             className='w-12 h-12 flex items-center justify-center bg-white/40 rounded-lg border border-white/30 absolute top-4 right-4 '
             onClick={onFavouriteClick}

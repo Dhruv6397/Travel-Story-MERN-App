@@ -13,7 +13,7 @@ import EmptyCard from "../../components/Cards/EmptyCard"
 import EmptyImage from "../../assets/images/empty.jpg"
 
 export default function Home() {
-
+  const [searchQuery,setSearchQuery] = useState("")
   const navigate = useNavigate()
   const [userInfo,setUserInfo] = useState(null)
   const [allStories,setAllStories] = useState([])
@@ -108,7 +108,7 @@ export default function Home() {
 
   return (
     <>
-      <Navbar userInfo={userInfo}/>
+      <Navbar userInfo={userInfo} searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>
 
       <div className="container mx-auto py-10">
         <div className="flex gap-7">

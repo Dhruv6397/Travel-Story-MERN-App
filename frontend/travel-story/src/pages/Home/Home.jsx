@@ -9,7 +9,8 @@ import AddEditTravelStory from "./AddEditTravelStory"
 import Modal from "react-modal"
 import {MdAdd} from "react-icons/md"
 import ViewTravelStory from "./ViewTravelStory"
-
+import EmptyCard from "../../components/Cards/EmptyCard"
+import EmptyImage from "../../assets/images/empty.jpg"
 
 export default function Home() {
 
@@ -55,7 +56,7 @@ export default function Home() {
   }
 
   //handle edit
-  const handleEdit = async(data)=>{
+  const handleEdit = (data)=>{
     setOpenAddEditModel({isShown:true,type:"edit",data:data})
   }
   //handle view story
@@ -81,6 +82,24 @@ export default function Home() {
     }
   }
 
+  //delete travel story
+  const deleteTravelStory = async(data)=>{
+    const storyId = data._id
+    console.log(storyId)
+    try{
+      const response = await axiosInstance.delete("/delete-story/"+storyId)
+      if(response.data && !response.data.error){
+        toast.success("Story Deleted Successfully")
+        setOpenViewModel((prevState)=>({...prevState,isShown:false}))
+        getAllStories()
+      }
+    }catch(error){
+      
+        console.log("an unexpected Error")
+    }
+    
+  }
+
   useEffect(()=>{
     getAllStories()
     getUserInfo()
@@ -98,8 +117,7 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4">
                   {allStories.map((item)=>{
                     return (
-                    <TravelStoryCard
-                    key={item._id}
+                    <TravelStoryCard key={item._id}
                     imageUrl={item.imageUrl}
                     title={item.title}
                     story={item.story}
@@ -110,11 +128,13 @@ export default function Home() {
                     onClick={()=>handleViewStory(item)}
                     onFavouriteClick={()=>updateIsFavourite(item)}
 
-                    />)
+                    />
+                  )
                   })}
                 </div>
               ):(
-                <>Empty Card here</>
+                <EmptyCard imgSrc={EmptyImage} message={`Start creating your first travel story! Click 'Add' button to jot 
+                  down your thoughts, ideas and memories. Let's get started!`}/>
               )}
           </div>
           <div className="w-[320px]">
@@ -166,7 +186,9 @@ export default function Home() {
               setOpenViewModel((prevState)=>({...prevState,isShown:false}))
               handleEdit(openViewModel.data || null)
             }}
-            onDeleteClick={()=>{}}
+            onDeleteClick={()=>{
+              deleteTravelStory(openViewModel.data || null)
+            }}
           />
         </Modal>
 

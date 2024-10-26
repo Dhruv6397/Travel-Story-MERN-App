@@ -7,6 +7,7 @@ import uploadImage from "../../utils/uploadImage"
 import axiosInstance from "../../utils/axiosInstance"
 import {toast} from "react-toastify"
 import moment from "moment"
+
 const AddEditTravelStory = ({
     storyInfo,
     type,
@@ -19,36 +20,7 @@ const AddEditTravelStory = ({
   const [visitedLocation,setVisitedLocation] = useState(storyInfo?.visitedLocation||[])
   const [visitedDate,setVisitedDate] = useState(storyInfo?.visitedDate || null)
   const [error,setError] = useState("")
-  
-  const updateTravelStory= async()=>{
-    try{
-      let imageUrl = ""
-      if(storyImg){
-        const imageUploadRes = await uploadImage(storyImg)
-        imageUrl = imageUploadRes.imageUrl || ""
-      }
-      const response = await axiosInstance.post("/edit-story",{
-        title,
-        story,
-        imageUrl:imageUrl || "",
-        visitedLocation,
-        visitedDate:visitedDate ? moment(visitedDate).valueOf():moment().valueOf()
-      })
-      if(response.data && response.data.story){
-        console.log("added story",response.data)
-        toast.success("Story added successfully")
-        getAllTravelStories()
-        onClose()
-      }
-
-    }catch(error){
-      if(error.response && error.response.data && error.response.message){
-        setError(error.response.data.message)
-      }else{
-        setError("Something went wrong")
-      }
-    }
-  }
+ 
   const addNewTravelStory=async()=>{
     try{
       let imageUrl = ""
@@ -79,6 +51,49 @@ const AddEditTravelStory = ({
     }
   }
 
+  const updateTravelStory= async()=>{
+    const storyId = storyInfo._id
+    try{
+      let imageUrl = ""
+      let postData = {
+        title,
+        story,
+        imageUrl:storyInfo.imageUrl || "",
+        visitedLocation,
+        visitedDate:visitedDate 
+        ? moment(visitedDate).valueOf()
+        :moment().valueOf()
+      }
+
+      if(typeof storyImg ==="object"){
+        const imgUploadRes = await uploadImage(storyImg)
+        imageUrl = imgUploadRes.imageUrl || ""
+
+        postData={
+          ...postData,
+          imageUrl:imageUrl
+        }
+      }
+      
+      const response = await axiosInstance.put(
+        "/edit-story/"+storyId
+        ,postData
+      )
+      if(response.data && response.data.story){
+        toast.success("Story Updated successfully")
+        getAllTravelStories()
+        onClose()
+      }
+
+    }catch(error){
+      if(error.response && error.response.data && error.response.message){
+        setError(error.response.data.message)
+      }else{
+        setError("Something went wrong")
+      }
+    }
+  }
+
   const handleAddOrUpdateClick=()=>{
    if(!title){
       setError("Please enter the title")
@@ -94,7 +109,30 @@ const AddEditTravelStory = ({
       addNewTravelStory()
     }
   }
-  const handleDeleteImg=()=>{}
+
+  const handleDeleteImg=async()=>{
+    const deleteImgRes = await axiosInstance.delete("/delete-image",{
+      params:{
+        imageUrl:storyInfo.imageUrl
+      }
+    })
+
+    if(deleteImgRes.data){
+      const storyId = storyInfo._id
+      const postData = {
+        title,
+        story,
+        visitedLocation,
+        visitedDate:moment().valueOf(),
+        imageUrl:""
+      }
+      const response = await axiosInstance.put(
+        "/edit-story/"+storyId,
+        postData
+      )
+      setStoryImg(null)
+    }
+  }
   return (
     <div className="relative">
       <div className="flex items-center justify-between">

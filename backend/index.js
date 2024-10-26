@@ -114,7 +114,7 @@ app.post('/image-upload',upload.single("image"), (req,res)=>{
                 message:"no image uploaded"})
         }
         const imageUrl = `http://localhost:8000/uploads/${req.file.filename}`
-        res.status(201).json({imageUrl})
+        res.status(200).json({imageUrl})
     }catch(err){
         res.status(500).json({error:true,message:error.message})
     }
@@ -190,16 +190,14 @@ app.get('/get-all-stories',authenticateToken,async (req,res)=>{
     }
 })
 
-
-
 //edit travel story
-app.post("/edit-story/:id",authenticateToken,async (req,res)=>{
+app.put("/edit-story/:id",authenticateToken,async (req,res)=>{
     const {id} = req.params
     const {title,story,visitedLocation,imageUrl,visitedDate} = req.body
     const {userId} = req.user
 
     //validate required fields
-    if(!title || !story || !visitedLocation || !imageUrl || !visitedDate){
+    if(!title || !story || !visitedLocation || !visitedDate){
         return res
         .status(400)
         .json({error:true,message:"All fields are required."})
@@ -234,7 +232,7 @@ app.post("/edit-story/:id",authenticateToken,async (req,res)=>{
 app.delete("/delete-story/:id",authenticateToken,async(req,res)=>{
     const {id} = req.params
     const {userId} = req.user
-
+    console.log(id)
     try{
         //find the travel story by id and ensure it belongs to the authenticated user
         const travelStory = await TravelStory.findOne({_id:id,userId:userId})
